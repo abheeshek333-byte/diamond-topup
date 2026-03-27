@@ -1,0 +1,15 @@
+{
+  "name": "diamond-topup",
+  "version": "1.0.0",
+  "description": "Diamond top-up store for Free Fire and Mobile Legends - Nepal",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
