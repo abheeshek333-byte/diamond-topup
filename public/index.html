@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diamond Top-Up Nepal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f0f5;color:#222}
+.hero{background:linear-gradient(135deg,#1a0533,#2d0a5e);padding:1.5rem 1rem;text-align:center;color:white}
+.hero h1{font-size:22px;font-weight:600;margin-bottom:4px}
+.hero p{font-size:13px;opacity:0.75}
+.game-tabs{display:flex;background:white;border-bottom:1px solid #eee}
+.game-tab{flex:1;padding:12px;text-align:center;cursor:pointer;font-size:14px;font-weight:500;color:#888;border-bottom:3px solid transparent}
+.game-tab.active{color:#534AB7;border-bottom-color:#534AB7}
+.game-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;color:white;margin-bottom:4px}
+.section{padding:1rem;max-width:600px;margin:0 auto}
+.section-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px}
+.packs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.5rem}
+.pack{background:white;border:1.5px solid #eee;border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.15s}
+.pack:hover{border-color:#7F77DD}
+.pack.selected{border-color:#534AB7;background:#EEEDFE}
+.pack .diamonds{font-size:16px;font-weight:600;color:#222}
+.pack .label{font-size:10px;color:#888}
+.pack .price{font-size:13px;color:#534AB7;font-weight:600;margin-top:4px}
+.pack .badge{font-size:9px;background:#E1F5EE;color:#0F6E56;padding:2px 6px;border-radius:8px;margin-top:3px;display:inline-block}
+.form-card{background:white;border-radius:10px;padding:1rem;margin-bottom:1.5rem;border:1px solid #eee}
+.form-row{margin-bottom:12px}
+.form-row label{font-size:12px;color:#666;display:block;margin-bottom:4px;font-weight:500}
+.form-row input{width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px}
+.form-row input:focus{outline:none;border-color:#534AB7}
+.pm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.5rem}
+.pm-card{background:white;border:1.5px solid #eee;border-radius:8px;padding:12px 8px;text-align:center;cursor:pointer;transition:all 0.15s}
+.pm-card:hover{border-color:#7F77DD}
+.pm-card.selected{border-color:#534AB7;background:#EEEDFE}
+.pm-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;margin:0 auto 6px}
+.pm-name{font-size:11px;color:#666;font-weight:500}
+.pm-number{font-size:10px;color:#999;margin-top:2px}
+.qr-card{display:none;background:white;border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;border:1px solid #eee;text-align:center}
+.qr-card.show{display:block}
+.qr-title{font-size:14px;font-weight:600;color:#222;margin-bottom:12px}
+.qr-wrap{width:160px;height:160px;margin:0 auto 12px;border:1px solid #eee;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.qr-note{font-size:12px;color:#666;line-height:1.7}
+.qr-amount{font-size:16px;font-weight:600;color:#534AB7;margin:6px 0}
+.submit-btn{width:100%;padding:14px;background:#534AB7;color:white;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:2rem}
+.submit-btn:hover{background:#3C3489}
+.success{display:none;text-align:center;padding:2rem 1rem;background:white;border-radius:10px;margin-bottom:2rem}
+.success.show{display:block}
+.success-icon{width:64px;height:64px;background:#E1F5EE;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:28px}
+.success h3{font-size:20px;margin-bottom:8px;color:#222}
+.success p{font-size:13px;color:#666;line-height:1.8}
+.reset-btn{margin-top:1rem;padding:10px 24px;background:transparent;border:1px solid #ddd;border-radius:8px;cursor:pointer;font-size:14px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>💎 Diamond Top-Up Nepal</h1>
+  <p>Free Fire &amp; Mobile Legends — Pay in NPR</p>
+</div>
+
+<div class="game-tabs">
+  <div class="game-tab active" id="tab-ff" onclick="switchGame('ff')">
+    <div class="game-badge" style="background:#FF6B35">FF</div><br>Free Fire
+  </div>
+  <div class="game-tab" id="tab-ml" onclick="switchGame('ml')">
+    <div class="game-badge" style="background:#1E88E5">ML</div><br>Mobile Legends
+  </div>
+</div>
+
+<div class="section">
+  <div id="main-content">
+    <div class="section-title" style="margin-top:1rem">Select package</div>
+    <div class="packs" id="packs-container"></div>
+
+    <div class="form-card">
+      <div class="section-title">Player info</div>
+      <div class="form-row">
+        <label id="uid-label">Player ID (Free Fire UID)</label>
+        <input type="text" id="player-id" placeholder="Enter your UID">
+      </div>
+      <div class="form-row" id="zone-row" style="display:none">
+        <label>Zone / Server ID</label>
+        <input type="text" id="zone-id" placeholder="e.g. 1234">
+      </div>
+      <div class="form-row">
+        <label>Your in-game name</label>
+        <input type="text" id="player-name" placeholder="Your nickname">
+      </div>
+      <div class="form-row">
+        <label>Contact (phone or email)</label>
+        <input type="text" id="contact" placeholder="98XXXXXXXX or email@gmail.com">
+      </div>
+    </div>
+
+    <div class="section-title">Payment method</div>
+    <div class="pm-grid">
+      <div class="pm-card" onclick="selectPM('khalti',this)">
+        <div class="pm-logo" style="background:#5C2D91">K</div>
+        <div class="pm-name">Khalti</div>
+        <div class="pm-number">9841234567</div>
+      </div>
+      <div class="pm-card" onclick="selectPM('esewa',this)">
+        <div class="pm-logo" style="background:#60BB46">eS</div>
+        <div class="pm-name">eSewa</div>
+        <div class="pm-number">9851234567</div>
+      </div>
+      <div class="pm-card" onclick="selectPM('globalime',this)">
+        <div class="pm-logo" style="background:#C0392B">GI</div>
+        <div class="pm-name">Global IME</div>
+        <div class="pm-number">9861234567</div>
+      </div>
+    </div>
+
+    <div class="qr-card" id="qr-card">
+      <div class="qr-title" id="qr-title">Scan to pay</div>
+      <div class="qr-wrap" id="qr-wrap"></div>
+      <div class="qr-amount" id="qr-amount"></div>
+      <div class="qr-note">Scan QR with your payment app and send the exact amount.<br>Then click Confirm below.</div>
+    </div>
+
+    <button class="submit-btn" onclick="submitOrder()">✅ Confirm &amp; Submit Order</button>
+  </div>
+
+  <div class="success" id="success-screen">
+    <div class="success-icon">✓</div>
+    <h3>Order Placed!</h3>
+    <p id="success-detail"></p>
+    <button class="reset-btn" onclick="resetForm()">Place another order</button>
+  </div>
+</div>
+
+<script>
+const games = {
+  ff: {
+    name: 'Free Fire', uid: 'Player ID (Free Fire UID)', zone: false,
+    packs: [
+      {diamonds:100, price:120},
+      {diamonds:310, price:350, badge:'Popular'},
+      {diamonds:520, price:580},
+      {diamonds:1060, price:1150, badge:'Best value'},
+      {diamonds:2180, price:2300},
+      {diamonds:5600, price:5800, badge:'Mega'}
+    ]
+  },
+  ml: {
+    name: 'Mobile Legends', uid: 'User ID (ML ID)', zone: true,
+    packs: [
+      {diamonds:86, price:130},
+      {diamonds:172, price:250, badge:'Popular'},
+      {diamonds:257, price:370},
+      {diamonds:706, price:1000, badge:'Best value'},
+      {diamonds:2195, price:3000},
+      {diamonds:5532, price:7200, badge:'Mega'}
+    ]
+  }
+};
+let currentGame = 'ff', selectedPack = null, selectedPM = null;
+
+function switchGame(g) {
+  currentGame = g;
+  selectedPack = null;
+  document.getElementById('tab-ff').className = 'game-tab' + (g==='ff'?' active':'');
+  document.getElementById('tab-ml').className = 'game-tab' + (g==='ml'?' active':'');
+  document.getElementById('uid-label').textContent = games[g].uid;
+  document.getElementById('zone-row').style.display = games[g].zone ? 'block' : 'none';
+  document.getElementById('qr-card').classList.remove('show');
+  renderPacks();
+}
+
+function renderPacks() {
+  const p = games[currentGame].packs;
+  document.getElementById('packs-container').innerHTML = p.map((pk,i) =>
+    '<div class="pack" onclick="selectPack('+i+',this)">'+
+    '<div style="font-size:18px">💎</div>'+
+    '<div class="diamonds">'+pk.diamonds+'</div>'+
+    '<div class="label">Diamonds</div>'+
+    '<div class="price">Rs. '+pk.price+'</div>'+
+    (pk.badge?'<div class="badge">'+pk.badge+'</div>':'')+
+    '</div>'
+  ).join('');
+}
+
+function selectPack(i, el) {
+  selectedPack = games[currentGame].packs[i];
+  document.querySelectorAll('.pack').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  if (selectedPM) showQR();
+}
+
+const pmInfo = {
+  khalti: {name:'Khalti', num:'9841234567', color:'#5C2D91'},
+  esewa:  {name:'eSewa',  num:'9851234567', color:'#60BB46'},
+  globalime: {name:'Global IME', num:'9861234567', color:'#C0392B'}
+};
+
+function selectPM(pm, el) {
+  selectedPM = pm;
+  document.querySelectorAll('.pm-card').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  if (selectedPack) showQR();
+}
+
+function showQR() {
+  const info = pmInfo[selectedPM];
+  document.getElementById('qr-title').textContent = 'Pay via ' + info.name;
+  document.getElementById('qr-amount').textContent = 'Rs. ' + selectedPack.price;
+  document.getElementById('qr-card').classList.add('show');
+  const wrap = document.getElementById('qr-wrap');
+  wrap.innerHTML = '';
+  new QRCode(wrap, {
+    text: info.name+'|'+info.num+'|Rs.'+selectedPack.price,
+    width: 156, height: 156,
+    colorDark: '#000', colorLight: '#fff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+}
+
+function submitOrder() {
+  const pid = document.getElementById('player-id').value.trim();
+  const pname = document.getElementById('player-name').value.trim();
+  const contact = document.getElementById('contact').value.trim();
+  const zone = document.getElementById('zone-id').value.trim();
+  if (!selectedPack) { alert('Please select a diamond package'); return; }
+  if (!selectedPM)   { alert('Please select a payment method'); return; }
+  if (!pid)    { alert('Please enter your Player ID'); return; }
+  if (!pname)  { alert('Please enter your in-game name'); return; }
+  if (!contact){ alert('Please enter your contact info'); return; }
+
+  const order = {
+    game: games[currentGame].name,
+    playerId: pid,
+    zone: zone || null,
+    playerName: pname,
+    contact: contact,
+    pack: selectedPack,
+    paymentMethod: pmInfo[selectedPM].name,
+    timestamp: new Date().toISOString()
+  };
+
+  fetch('/api/orders', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(order)
+  }).catch(() => {});
+
+  document.getElementById('main-content').style.display = 'none';
+  const sd = document.getElementById('success-screen');
+  sd.classList.add('show');
+  document.getElementById('success-detail').innerHTML =
+    '<b>'+order.game+'</b> — '+selectedPack.diamonds+' Diamonds<br>'+
+    'Player: '+pname+' (UID: '+pid+')'+(zone?' [Zone: '+zone+']':'')+'<br>'+
+    'Payment: '+pmInfo[selectedPM].name+' — Rs. '+selectedPack.price+'<br><br>'+
+    'Diamonds will be delivered after your payment is confirmed.';
+}
+
+function resetForm() {
+  document.getElementById('main-content').style.display = 'block';
+  document.getElementById('success-screen').classList.remove('show');
+  ['player-id','player-name','contact','zone-id'].forEach(id => document.getElementById(id).value = '');
+  selectedPack = null; selectedPM = null;
+  document.querySelectorAll('.pack,.pm-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('qr-card').classList.remove('show');
+  renderPacks();
+}
+
+renderPacks();
+</script>
+</body>
+</html>
